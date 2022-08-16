@@ -1,0 +1,70 @@
+.react-calendar {
+    @apply w-full;
+
+
+    .react-calendar__navigation {
+        @apply flex justify-center items-center h-6 text-xl font-bold;
+
+        .react-calendar__navigation__label{
+            @apply px-4;
+            
+            flex-grow: 0 !important;
+        }
+    }
+
+    .react-calendar__viewContainer {
+        @apply flex;
+
+        > * {
+            @apply w-1/2
+        }
+
+        > :first-child {
+            @apply pr-2
+        }
+
+        > :nth-child(2) {
+            @apply pl-2
+        }
+    }
+
+
+    .react-calendar__month-view__weekdays__weekday {
+        @apply h-9 flex justify-center items-center
+    }
+
+    .react-calendar__tile {
+        @apply h-9;
+
+        &:disabled {
+            @apply bg-slate-200 text-slate-400
+        }
+
+        
+    }
+
+    .react-calendar__tile--range{
+        @apply bg-slate-500 text-slate-200;
+
+        &.react-calendar__tile--rangeStart,
+        &.react-calendar__tile--rangeEnd {
+            @apply bg-slate-800 text-slate-200
+        }
+
+        &.react-calendar__tile--rangeStart {
+            @apply rounded-l-lg
+        }
+
+        &.react-calendar__tile--rangeEnd {
+            @apply rounded-r-lg
+        }
+    }
+
+    .react-calendar__month-view__days__day--neighboringMonth {
+        @apply invisible
+    }
+
+    abbr:where([title]) {
+        @apply no-underline
+    }
+}

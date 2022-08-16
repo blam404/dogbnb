@@ -1,246 +1,163 @@
-import Head from 'next/head'
-import clientPromise from '../lib/mongodb'
+import React, { useCallback, useEffect, useRef, useState } from "react";
+import Image from "next/image";
+import Link from "next/link";
 
-export default function Home({ isConnected }) {
-  return (
-    <div className="container">
-      <Head>
-        <title>Create Next App</title>
-        <link rel="icon" href="/favicon.ico" />
-      </Head>
+import { StarIcon } from "@heroicons/react/solid";
 
-      <main>
-        <h1 className="title">
-          Welcome to <a href="https://nextjs.org">Next.js with MongoDB!</a>
-        </h1>
+import clientPromise from "../lib/mongodb";
+import Footer from "../components/footer";
+import Header from "../components/header";
+import Loading from "../components/ui/loading";
+import titleCase from "../utilityFunctions/titleCase";
 
-        {isConnected ? (
-          <h2 className="subtitle">You are connected to MongoDB</h2>
-        ) : (
-          <h2 className="subtitle">
-            You are NOT connected to MongoDB. Check the <code>README.md</code>{' '}
-            for instructions.
-          </h2>
-        )}
+export default function Home({ dogCount, reviews }) {
+	const [dogList, setDogList] = useState([]);
+	const [loading, setLoading] = useState(false);
+	const [pageNumber, setPageNumber] = useState(1);
+	const [hasMore, setHasMore] = useState();
 
-        <p className="description">
-          Get started by editing <code>pages/index.js</code>
-        </p>
+	const observer = useRef();
+	const loadMoreRef = useCallback(
+		(node) => {
+			if (loading) {
+				return;
+			}
+			if (observer.current) {
+				observer.current.disconnect();
+			}
+			observer.current = new IntersectionObserver((entries) => {
+				if (entries[0].isIntersecting) {
+					setPageNumber(pageNumber + 1);
+				}
+			});
+			if (node) {
+				observer.current.observe(node);
+			}
+		},
+		[loading, hasMore]
+	);
 
-        <div className="grid">
-          <a href="https://nextjs.org/docs" className="card">
-            <h3>Documentation &rarr;</h3>
-            <p>Find in-depth information about Next.js features and API.</p>
-          </a>
+	const itemsPerPage = 8;
+	const totalPages = Math.ceil(dogCount / itemsPerPage);
 
-          <a href="https://nextjs.org/learn" className="card">
-            <h3>Learn &rarr;</h3>
-            <p>Learn about Next.js in an interactive course with quizzes!</p>
-          </a>
+	useEffect(() => {
+		getDogs();
+		setHasMore(pageNumber !== totalPages);
+	}, [pageNumber]);
 
-          <a
-            href="https://github.com/vercel/next.js/tree/canary/examples"
-            className="card"
-          >
-            <h3>Examples &rarr;</h3>
-            <p>Discover and deploy boilerplate example Next.js projects.</p>
-          </a>
+	const getDogs = async () => {
+		setLoading(true);
+		await fetch("/api/getDogs", {
+			method: "POST",
+			headers: {
+				"Content-Type": "application/json",
+			},
+			body: JSON.stringify({ pageNumber, itemsPerPage }),
+		}).then(async (res) => {
+			const { dogs } = await res.json();
+			setDogList([...dogList, ...dogs]);
+			setLoading(false);
+		});
+	};
 
-          <a
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-            className="card"
-          >
-            <h3>Deploy &rarr;</h3>
-            <p>
-              Instantly deploy your Next.js site to a public URL with Vercel.
-            </p>
-          </a>
-        </div>
-      </main>
+	useEffect(() => {}, [pageNumber]);
+	return (
+		<>
+			<Header position="fixed" />
+			<div className="flex justify-center mt-24">
+				<div className="container flex flex-wrap justify-center mb-12">
+					{dogList.map((dog, index) => {
+						const ratings = reviews
+							.filter((review) => {
+								if (review.dogId === dog._id) {
+									return review;
+								}
+							})
+							.map((review) => {
+								return review.rating;
+							});
 
-      <footer>
-        <a
-          href="https://vercel.com?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Powered by{' '}
-          <img src="/vercel.svg" alt="Vercel Logo" className="logo" />
-        </a>
-      </footer>
+						const avgRating =
+							ratings &&
+							ratings.length > 0 &&
+							(ratings.reduce((a, b) => a + b) / ratings.length)
+								.toFixed(2)
+								.replace(/[.,]00$/, "");
 
-      <style jsx>{`
-        .container {
-          min-height: 100vh;
-          padding: 0 0.5rem;
-          display: flex;
-          flex-direction: column;
-          justify-content: center;
-          align-items: center;
-        }
-
-        main {
-          padding: 5rem 0;
-          flex: 1;
-          display: flex;
-          flex-direction: column;
-          justify-content: center;
-          align-items: center;
-        }
-
-        footer {
-          width: 100%;
-          height: 100px;
-          border-top: 1px solid #eaeaea;
-          display: flex;
-          justify-content: center;
-          align-items: center;
-        }
-
-        footer img {
-          margin-left: 0.5rem;
-        }
-
-        footer a {
-          display: flex;
-          justify-content: center;
-          align-items: center;
-        }
-
-        a {
-          color: inherit;
-          text-decoration: none;
-        }
-
-        .title a {
-          color: #0070f3;
-          text-decoration: none;
-        }
-
-        .title a:hover,
-        .title a:focus,
-        .title a:active {
-          text-decoration: underline;
-        }
-
-        .title {
-          margin: 0;
-          line-height: 1.15;
-          font-size: 4rem;
-        }
-
-        .title,
-        .description {
-          text-align: center;
-        }
-
-        .subtitle {
-          font-size: 2rem;
-        }
-
-        .description {
-          line-height: 1.5;
-          font-size: 1.5rem;
-        }
-
-        code {
-          background: #fafafa;
-          border-radius: 5px;
-          padding: 0.75rem;
-          font-size: 1.1rem;
-          font-family: Menlo, Monaco, Lucida Console, Liberation Mono,
-            DejaVu Sans Mono, Bitstream Vera Sans Mono, Courier New, monospace;
-        }
-
-        .grid {
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          flex-wrap: wrap;
-
-          max-width: 800px;
-          margin-top: 3rem;
-        }
-
-        .card {
-          margin: 1rem;
-          flex-basis: 45%;
-          padding: 1.5rem;
-          text-align: left;
-          color: inherit;
-          text-decoration: none;
-          border: 1px solid #eaeaea;
-          border-radius: 10px;
-          transition: color 0.15s ease, border-color 0.15s ease;
-        }
-
-        .card:hover,
-        .card:focus,
-        .card:active {
-          color: #0070f3;
-          border-color: #0070f3;
-        }
-
-        .card h3 {
-          margin: 0 0 1rem 0;
-          font-size: 1.5rem;
-        }
-
-        .card p {
-          margin: 0;
-          font-size: 1.25rem;
-          line-height: 1.5;
-        }
-
-        .logo {
-          height: 1em;
-        }
-
-        @media (max-width: 600px) {
-          .grid {
-            width: 100%;
-            flex-direction: column;
-          }
-        }
-      `}</style>
-
-      <style jsx global>{`
-        html,
-        body {
-          padding: 0;
-          margin: 0;
-          font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto,
-            Oxygen, Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue,
-            sans-serif;
-        }
-
-        * {
-          box-sizing: border-box;
-        }
-      `}</style>
-    </div>
-  )
+						return (
+							<div className="mx-4 my-6" key={`dogCard-${index}`}>
+								<Link href={`/dogs/${dog._id}`}>
+									<div className="cursor-pointer w-64">
+										<div className="w-64 h-64 relative">
+											<Image
+												src={dog.pics[0]}
+												layout="fill"
+												objectFit="cover"
+												className="rounded-3xl"
+												priority={index <= 6}
+											/>
+										</div>
+										<div className="pt-2">
+											<div className="flex justify-between">
+												<div>
+													<strong>
+														{titleCase(dog.name)}
+													</strong>
+												</div>
+												{avgRating && (
+													<div className="flex">
+														<StarIcon className="w-6" />
+														{avgRating}
+													</div>
+												)}
+											</div>
+											<div className="text-slate-400">
+												<em>
+													{dog.city}, {dog.state}{" "}
+													{dog.country ===
+													"United States"
+														? ""
+														: dog.country}
+												</em>
+											</div>
+											<div>
+												<strong>${dog.price}</strong>
+												/night
+											</div>
+										</div>
+									</div>
+								</Link>
+							</div>
+						);
+					})}
+					<div
+						ref={loadMoreRef}
+						className="flex justify-center items-center mx-4 my-6 w-64 h-64"
+					>
+						{loading && <Loading size="64" />}
+					</div>
+				</div>
+			</div>
+			<Footer position="fixed" />
+		</>
+	);
 }
 
-export async function getServerSideProps(context) {
-  try {
-    await clientPromise
-    // `await clientPromise` will use the default database passed in the MONGODB_URI
-    // However you can use another database (e.g. myDatabase) by replacing the `await clientPromise` with the following code:
-    //
-    // `const client = await clientPromise`
-    // `const db = client.db("myDatabase")`
-    //
-    // Then you can execute queries against your database like so:
-    // db.find({}) or any of the MongoDB Node Driver commands
+export async function getStaticProps(context) {
+	try {
+		const client = await clientPromise;
+		const db = await client.db("dogbnb");
+		const dogCount = await db.collection("dogs").countDocuments();
+		const reviews = await db.collection("dogReviews").find({}).toArray();
+		const convertedReviews = JSON.parse(JSON.stringify(reviews));
 
-    return {
-      props: { isConnected: true },
-    }
-  } catch (e) {
-    console.error(e)
-    return {
-      props: { isConnected: false },
-    }
-  }
+		return {
+			props: { dogCount, reviews: convertedReviews },
+		};
+	} catch (e) {
+		console.error(e);
+		return {
+			props: { dogCount: null },
+		};
+	}
 }
