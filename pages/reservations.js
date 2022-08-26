@@ -1,11 +1,15 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import Image from "next/image";
+import Link from "next/link";
 
 import clientPromise from "../lib/mongodb";
 import { Context } from "../components/store";
 import Footer from "../components/footer";
 import Header from "../components/header";
+import Review from "../components/review";
 import titleCase from "../utilityFunctions/titleCase";
+
+import { PencilIcon } from "@heroicons/react/solid";
 
 export async function getServerSideProps(context) {
 	try {
@@ -34,9 +38,23 @@ export async function getServerSideProps(context) {
 }
 
 export default function Reservations({ dogs, reservations }) {
+	const [dogId, setDogId] = useState();
 	const [futureRes, setFutureRes] = useState();
 	const { login } = useContext(Context);
 	const [pastRes, setPastRes] = useState();
+	const [rating, setRating] = useState(0);
+	const [reservationId, setReservationId] = useState();
+	const [review, setReview] = useState("");
+
+	const reviewRef = useRef();
+
+	const openReviewModal = (resId, doggyId) => {
+		setRating(0);
+		setReview("");
+		setDogId(doggyId);
+		setReservationId(resId);
+		reviewRef.current.openModal();
+	};
 
 	// useEffect(() => {
 	// 	if (!login.loggedIn) {
@@ -77,7 +95,7 @@ export default function Reservations({ dogs, reservations }) {
 		return 0;
 	};
 
-	const MapRes = ({ resList }) => {
+	const mapRes = (resList, past) => {
 		return (
 			<>
 				<div className="flex flex-wrap justify-start">
@@ -92,12 +110,14 @@ export default function Reservations({ dogs, reservations }) {
 								key={`reservation-${res._id}`}
 							>
 								<div className="w-14 h-14 mr-2 relative">
-									<Image
-										src={currentDog.pics[0]}
-										layout="fill"
-										objectFit="cover"
-										className="rounded-lg"
-									/>
+									<Link href={`/dogs/${currentDog._id}`}>
+										<Image
+											src={currentDog.pics[0]}
+											layout="fill"
+											objectFit="cover"
+											className="rounded-lg cursor-pointer"
+										/>
+									</Link>
 								</div>
 								<div>
 									<p className="m-0 leading-4">
@@ -113,6 +133,19 @@ export default function Reservations({ dogs, reservations }) {
 										).toLocaleDateString("en-US")}
 									</p>
 								</div>
+								{past && !res.reviewed && (
+									<div>
+										<PencilIcon
+											className="w-5 h-4 mx-2 cursor-pointer"
+											onClick={() =>
+												openReviewModal(
+													res._id,
+													currentDog._id
+												)
+											}
+										/>
+									</div>
+								)}
 							</div>
 						);
 					})}
@@ -123,24 +156,24 @@ export default function Reservations({ dogs, reservations }) {
 
 	return (
 		<>
+			<Header position="fixed" />
 			{login.loggedIn ? (
 				<>
-					<Header position="fixed" />
 					<div className="flex justify-center mt-24">
 						<div className="container px-4">
 							<h1 className="mb-2">Doggy Play Dates</h1>
 							{futureRes && futureRes.length > 0 && (
 								<>
 									<hr className="my-6" />
-									<h2>Future Play Dates</h2>
-									<MapRes resList={futureRes} />
+									<h2 className="mb-4">Future Play Dates</h2>
+									{mapRes(futureRes)}
 								</>
 							)}
 							{pastRes && pastRes.length > 0 && (
 								<>
 									<hr className="my-6" />
-									<h2>Past Play Dates</h2>
-									<MapRes resList={pastRes} />
+									<h2 className="mb-4">Past Play Dates</h2>
+									{mapRes(pastRes, true)}
 								</>
 							)}
 							{!futureRes && !pastRes && (
@@ -152,13 +185,22 @@ export default function Reservations({ dogs, reservations }) {
 									</p>
 								</>
 							)}
+							<Review
+								ref={reviewRef}
+								rating={rating}
+								setRating={setRating}
+								review={review}
+								setReview={setReview}
+								dogId={dogId}
+								reservationId={reservationId}
+							/>
 						</div>
 					</div>
-					<Footer position="fixed" />
 				</>
 			) : (
 				<></>
 			)}
+			<Footer position="fixed" />
 		</>
 	);
 }

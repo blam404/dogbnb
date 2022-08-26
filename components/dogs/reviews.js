@@ -33,16 +33,6 @@ const Reviews = ({ reviews, owners, avgRating }) => {
 		"December",
 	];
 
-	const sortNewest = (a, b) => {
-		if (a.reviewDate < b.reviewDate) {
-			return 1;
-		}
-		if (a.reviewDate > b.reviewDate) {
-			return -1;
-		}
-		return 0;
-	};
-
 	const limitedReviews = reviews.filter((review, index) => index <= 6);
 
 	return (
@@ -64,14 +54,22 @@ const Reviews = ({ reviews, owners, avgRating }) => {
 					return (
 						<div key={review._id} className="w-1/2 pr-8">
 							<div className="flex items-center">
-								<div className="w-16 h-16 relative mr-4">
-									<Image
-										src={reviewer.picMedium}
-										layout="fill"
-										objectFit="cover"
-										className="rounded-full"
-									/>
-								</div>
+								{reviewer.picMedium ? (
+									<div className="w-16 h-16 mr-4 relative">
+										<Image
+											src={reviewer.picMedium}
+											layout="fill"
+											objectFit="cover"
+											className="rounded-full"
+										/>
+									</div>
+								) : (
+									<div className="h-16 w-16 mr-4 text-3xl text-white bg-slate-600 rounded-full flex justify-center items-center">
+										{reviewer.username
+											.charAt(0)
+											.toUpperCase()}
+									</div>
+								)}
 								<div>
 									<div className="text-lg">
 										<strong>{reviewer.firstName}</strong>
@@ -119,14 +117,22 @@ const Reviews = ({ reviews, owners, avgRating }) => {
 						return (
 							<div key={review._id} className="w-full mb-4">
 								<div className="flex items-center">
-									<div className="w-16 h-16 relative">
-										<Image
-											src={reviewer.picMedium}
-											layout="fill"
-											objectFit="cover"
-											className="rounded-full"
-										/>
-									</div>
+									{reviewer.picMedium ? (
+										<div className="w-16 h-16 mr-4 relative">
+											<Image
+												src={reviewer.picMedium}
+												layout="fill"
+												objectFit="cover"
+												className="rounded-full"
+											/>
+										</div>
+									) : (
+										<div className="h-16 w-16 mr-4 text-white bg-slate-600 rounded-full flex justify-center items-center">
+											{reviewer.username
+												.charAt(0)
+												.toUpperCase()}
+										</div>
+									)}
 									<div>
 										<div className="text-lg">
 											<strong>
