@@ -9,59 +9,74 @@ import classNames from "classnames";
 
 // position (top, right, bottom left) has be passed as className since tailwind cannot do dynamic classes
 
-const DropdownWrapper = forwardRef(
-	({ children, className, handleShowMenu }, ref) => {
-		const [showMenu, setShowMenu] = useState(false);
-		const dropdownRef = useRef();
+const DropdownWrapper = forwardRef(({ children, className }, ref) => {
+	const [opacity, setOpacity] = useState(0);
+	const [showMenu, setShowMenu] = useState(false);
+	const dropdownRef = useRef();
 
-		useImperativeHandle(ref, () => {
-			return {
-				toggleMenu: () => toggleMenu(),
+	useImperativeHandle(ref, () => {
+		return {
+			openMenu: () => openMenu(),
+			closeMenu: () => closeMenu(),
+		};
+	});
+
+	useEffect(() => {
+		if (showMenu) {
+			setOpacity(1);
+		}
+	}, [showMenu]);
+
+	const openMenu = () => {
+		setShowMenu(true);
+	};
+	const closeMenu = () => {
+		setOpacity(0);
+		setTimeout(() => {
+			setShowMenu(false);
+		}, 500);
+	};
+
+	const handleClickOutsideProfile = (event) => {
+		if (
+			dropdownRef.current &&
+			!dropdownRef.current.parentNode.parentNode.contains(event.target)
+		) {
+			closeMenu();
+		}
+	};
+
+	useEffect(() => {
+		if (showMenu) {
+			document.addEventListener("click", handleClickOutsideProfile);
+			return () => {
+				document.removeEventListener(
+					"click",
+					handleClickOutsideProfile
+				);
 			};
-		});
-		const toggleMenu = () => {
-			setShowMenu(!showMenu);
-		};
+		}
+	}, [showMenu]);
 
-		const handleClickOutsideProfile = (event) => {
-			if (
-				dropdownRef.current &&
-				!dropdownRef.current.parentNode.parentNode.contains(
-					event.target
-				)
-			) {
-				setShowMenu(false);
-			}
-		};
+	const wrapperClass = classNames(
+		"absolute w-max transition-all duration-250",
+		className
+	);
 
-		useEffect(() => {
-			if (showMenu) {
-				document.addEventListener("click", handleClickOutsideProfile);
-				return () => {
-					document.removeEventListener(
-						"click",
-						handleClickOutsideProfile
-					);
-				};
-			}
-		}, [showMenu]);
-
-		const wrapperClass = classNames("absolute w-max", className);
-
-		return showMenu ? (
-			<div
-				className={wrapperClass}
-				onClick={handleShowMenu}
-				ref={dropdownRef}
-			>
-				<div className="dropdown-wrapper border bg-white shadow-md rounded-md">
-					<ul className="list-none">{children}</ul>
-				</div>
+	return showMenu ? (
+		<div
+			className={wrapperClass}
+			onClick={closeMenu}
+			ref={dropdownRef}
+			style={{ opacity: opacity }}
+		>
+			<div className="dropdown-wrapper border bg-white shadow-md rounded-md">
+				<ul className="list-none">{children}</ul>
 			</div>
-		) : (
-			<></>
-		);
-	}
-);
+		</div>
+	) : (
+		<></>
+	);
+});
 
 export default DropdownWrapper;

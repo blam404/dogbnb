@@ -12,13 +12,8 @@ import { UserCircleIcon } from "@heroicons/react/solid";
 const Header = ({ position }) => {
 	const { login, loginModalRef, setLogin, signUpModalRef } =
 		useContext(Context);
-	const [showMenu, setShowMenu] = useState(false);
 
 	const profileMenuRef = useRef();
-
-	const toggleShowMenu = () => {
-		setShowMenu(!showMenu);
-	};
 
 	const openSignupModal = () => {
 		signUpModalRef.current.openModal();
@@ -28,8 +23,8 @@ const Header = ({ position }) => {
 		loginModalRef.current.openModal();
 	};
 
-	const toggleProfileMenu = () => {
-		profileMenuRef.current.toggleMenu();
+	const openProfileMenu = () => {
+		profileMenuRef.current.openMenu();
 	};
 
 	const logout = () => {
@@ -57,7 +52,7 @@ const Header = ({ position }) => {
 				<div className="flex items-center pr-4 relative">
 					<div
 						className="flex items-center border-2 rounded-full px-2 py-1 cursor-pointer"
-						onClick={toggleProfileMenu}
+						onClick={openProfileMenu}
 					>
 						<div>
 							<MenuIcon className="h-5 w-5 text-slate-600" />{" "}
@@ -78,8 +73,6 @@ const Header = ({ position }) => {
 					<nav>
 						<DropdownWrapper
 							className="top-14 right-4"
-							showMenu={showMenu}
-							toggleShowMenu={toggleShowMenu}
 							ref={profileMenuRef}
 						>
 							{login.loggedIn && (
