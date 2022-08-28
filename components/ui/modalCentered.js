@@ -42,20 +42,21 @@ const ModalCentered = forwardRef(({ children }, ref) => {
 
 	if (showModal) {
 		return createPortal(
-			<div
-				className="fixed inset-0 bg-black/75 z-10 transition-all duration-250"
-				style={{
-					opacity: opacity,
-				}}
-				onClick={closeModal}
-			>
+			<>
 				<div
-					className="fixed left-1/2 -translate-x-1/2 top-1/2 -translate-y-1/2 bg-white z-10 rounded-lg p-6 overflow-y-auto"
-					style={{ maxHeight: "75%" }}
+					className="fixed inset-0 bg-black/75 z-10 transition-all duration-250"
+					style={{
+						opacity: opacity,
+					}}
+					onClick={closeModal}
+				></div>
+				<div
+					className="fixed left-1/2 -translate-x-1/2 top-1/2 -translate-y-1/2 bg-white z-10 rounded-lg p-6 overflow-y-auto transition-all duration-250"
+					style={{ maxHeight: "75%", opacity: opacity }}
 				>
 					{children}
 				</div>
-			</div>,
+			</>,
 			document.getElementById("modal-root")
 		);
 	} else {
