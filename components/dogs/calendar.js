@@ -3,6 +3,7 @@ import Calendar from "react-calendar";
 
 import { Context } from "../store";
 import { convertToUTC, xDateFromToday } from "../../utilityFunctions/dateTime";
+import getBrowserWidth from "../../utilityFunctions/getBrowserWidth";
 import titleCase from "../../utilityFunctions/titleCase";
 
 import { ChevronLeftIcon } from "@heroicons/react/solid";
@@ -13,6 +14,7 @@ const CalendarBooking = ({ dog }) => {
 	const [partialSelected, setPartialSelected] = useState(null);
 	const [reservations, setReservations] = useState([]);
 	const { startDate, setStartDate } = useContext(Context);
+	const { md } = getBrowserWidth();
 
 	useEffect(() => {
 		getReservations();
@@ -125,7 +127,7 @@ const CalendarBooking = ({ dog }) => {
 				prevLabel={<ChevronLeftIcon className="h-4 w-4" />}
 				prev2Label={null}
 				selectRange={true}
-				showDoubleView={true}
+				showDoubleView={md}
 				tileDisabled={checkTileDisabled}
 			/>
 		</>

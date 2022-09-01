@@ -106,32 +106,35 @@ export default function Reservations({ dogs, reservations }) {
 
 						return (
 							<div
-								className="flex items-center w-1/3 mb-4"
+								className="flex items-center justify-between w-full md:w-1/3 mb-4"
 								key={`reservation-${res._id}`}
 							>
-								<div className="w-14 h-14 mr-2 relative">
-									<Link href={`/dogs/${currentDog._id}`}>
-										<Image
-											src={currentDog.pics[0]}
-											layout="fill"
-											objectFit="cover"
-											className="rounded-lg cursor-pointer"
-										/>
-									</Link>
-								</div>
-								<div>
-									<p className="m-0 leading-4">
-										{titleCase(currentDog.name)}
-									</p>
-									<p className="text-slate-400 m-0 leading-4">
-										{new Date(
-											res.startDate
-										).toLocaleDateString("en-US")}{" "}
-										&ndash;{" "}
-										{new Date(
-											res.endDate
-										).toLocaleDateString("en-US")}
-									</p>
+								<div className="flex items-center">
+									<div className="w-14 h-14 mr-2 relative">
+										<Link href={`/dogs/${currentDog._id}`}>
+											<Image
+												src={currentDog.pics[0]}
+												layout="fill"
+												objectFit="cover"
+												className="rounded-lg cursor-pointer"
+											/>
+										</Link>
+									</div>
+
+									<div>
+										<p className="m-0 leading-4">
+											{titleCase(currentDog.name)}
+										</p>
+										<p className="text-slate-400 m-0 leading-4">
+											{new Date(
+												res.startDate
+											).toLocaleDateString("en-US")}{" "}
+											&ndash;{" "}
+											{new Date(
+												res.endDate
+											).toLocaleDateString("en-US")}
+										</p>
+									</div>
 								</div>
 								{past && !res.reviewed && (
 									<div>

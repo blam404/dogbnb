@@ -16,7 +16,9 @@
         @apply flex;
 
         > * {
-            @apply w-1/2
+            @media (min-width: 768px) {
+                @apply w-1/2;
+            }
         }
 
         > :first-child {

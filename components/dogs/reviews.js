@@ -36,13 +36,13 @@ const Reviews = ({ reviews, owners, avgRating }) => {
 	const limitedReviews = reviews.filter((review, index) => index <= 6);
 
 	return (
-		<div>
+		<div className="mb-4">
 			<h2 className="flex my-8">
 				<StarIcon className="w-6" /> {avgRating} &#x2022;{" "}
 				{reviews.length} reviews
 			</h2>
-			<div className="flex flex-wrap">
-				{limitedReviews.map((review) => {
+			<div className="md:flex md:flex-wrap overflow-x-scroll md:overflow-x-auto whitespace-nowrap md:whitespace-normal">
+				{limitedReviews.map((review, index) => {
 					const reviewer = owners.find(
 						(owner) => owner._id === review.reviewerId
 					);
@@ -52,7 +52,16 @@ const Reviews = ({ reviews, owners, avgRating }) => {
 					const reviewYear = reviewDate.getFullYear();
 
 					return (
-						<div key={review._id} className="w-1/2 pr-8">
+						<div
+							key={review._id}
+							className={`inline-block align-top w-11/12 md:w-1/2 border md:border-0 p-4 md:p-0 md:pr-8 rounded-xl md:rounded-none mx-1 md:mx-0 ${
+								index === 0 ? "ml-0" : ""
+							} ${
+								index === limitedReviews.length - 1
+									? "mr-0"
+									: ""
+							}`}
+						>
 							<div className="flex items-center">
 								{reviewer.picMedium ? (
 									<div className="w-16 h-16 mr-4 relative">
@@ -77,7 +86,9 @@ const Reviews = ({ reviews, owners, avgRating }) => {
 									<div className="text-base text-slate-400">{`${reviewMonth} ${reviewYear}`}</div>
 								</div>
 							</div>
-							<div className="my-4">{review.review}</div>
+							<div className="my-4 whitespace-normal">
+								{review.review}
+							</div>
 						</div>
 					);
 				})}
@@ -85,7 +96,11 @@ const Reviews = ({ reviews, owners, avgRating }) => {
 
 			{reviews.length > 6 && (
 				<div className="flex mb-4">
-					<Button outline onClick={openAllReviewModal}>
+					<Button
+						outline
+						onClick={openAllReviewModal}
+						className="w-full md:w-auto"
+					>
 						Show all {reviews.length} reviews
 					</Button>
 				</div>

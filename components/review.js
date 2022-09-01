@@ -57,7 +57,7 @@ const Review = forwardRef(
 					}, 1500);
 				}
 			} else {
-				console.log("fill out he shit");
+				console.log("Fill out the review");
 			}
 		};
 		return (

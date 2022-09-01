@@ -7,6 +7,7 @@ import { StarIcon } from "@heroicons/react/solid";
 import CalendarBooking from "../../components/dogs/calendar";
 import clientPromise from "../../lib/mongodb";
 import Gallery from "../../components/dogs/gallery";
+import getBrowserWidth from "../../utilityFunctions/getBrowserWidth";
 import Footer from "../../components/footer";
 import Header from "../../components/header";
 import Reservation from "../../components/dogs/reservation";
@@ -55,6 +56,8 @@ export async function getStaticProps(context) {
 }
 
 export default function DogPage({ dog, owners, reviews }) {
+	const { md } = getBrowserWidth();
+
 	const ratings = reviews.map((review) => {
 		return review.rating;
 	});
@@ -71,26 +74,36 @@ export default function DogPage({ dog, owners, reviews }) {
 	return (
 		<>
 			<Header position="static" />
-			<div className="flex justify-center mt-8">
+			<div
+				className={`flex justify-center ${md ? "mt-8" : ""}`}
+				style={{
+					minHeight: "calc(100vh - 128px)",
+				}}
+			>
 				<div className="container px-4">
-					<h1 className="mb-2">
-						{dogName} | {dog.city}, {dog.state}
-						{dog.country !== "United States" && `, ${dog.country}`}
-					</h1>
-					<div className="flex my-2">
-						<StarIcon className="w-6" />{" "}
-						<strong>{avgRating}</strong> &#x2022;&nbsp;
-						<span>{reviews.length} reviews</span>
+					<div className="flex flex-wrap">
+						<div className="w-full pt-2 order-2 md:order-1">
+							<h1 className="mb-2">
+								{dogName} | {dog.city}, {dog.state}
+								{dog.country !== "United States" &&
+									`, ${dog.country}`}
+							</h1>
+							<div className="flex my-2">
+								<StarIcon className="w-6" />{" "}
+								<strong>{avgRating}</strong> &#x2022;&nbsp;
+								<span>{reviews.length} reviews</span>
+							</div>
+						</div>
+						<Gallery pictures={dog.pics} />
 					</div>
-					<Gallery pictures={dog.pics} />
 					<div className="flex">
-						<div className="my-2 w-3/5">
+						<div className="my-2 w-full md:w-3/5">
 							<div className="flex justify-between items-center ">
-								<h2>
+								<h2 className="w-3/4 md:w-fit">
 									{`${dogName}'s`} human is {owner.firstName}{" "}
 									{owner.lastName}
 								</h2>
-								<div className="w-16 h-16 relative">
+								<div className="w-16 h-16 relative ml-2">
 									<Image
 										src={owner.picMedium}
 										layout="fill"
@@ -107,7 +120,7 @@ export default function DogPage({ dog, owners, reviews }) {
 										<div className="flex flex-wrap">
 											{dog.tricks.map((trick, index) => (
 												<div
-													className="w-1/3"
+													className="w-1/2 md:w-1/3"
 													key={`dogTrick-${index}`}
 												>
 													- {trick}
@@ -125,7 +138,7 @@ export default function DogPage({ dog, owners, reviews }) {
 										<div className="flex flex-wrap">
 											{dog.diet.map((diet, index) => (
 												<div
-													className="w-1/3"
+													className="w-1/2 md:w-1/3"
 													key={`diet-${index}`}
 												>
 													- {diet}
@@ -140,9 +153,7 @@ export default function DogPage({ dog, owners, reviews }) {
 								<CalendarBooking dog={dog} />
 							</div>
 						</div>
-						<div className="relative w-2/5 pl-12">
-							<Reservation dog={dog} />
-						</div>
+						<Reservation dog={dog} />
 					</div>
 					{reviews.length > 0 && (
 						<>
@@ -156,7 +167,7 @@ export default function DogPage({ dog, owners, reviews }) {
 					)}
 				</div>
 			</div>
-			<Footer position="static" />
+			<Footer position="static" className="mb-24 md:mb-0" />
 		</>
 	);
 }

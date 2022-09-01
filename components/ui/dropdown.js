@@ -59,7 +59,7 @@ const DropdownWrapper = forwardRef(({ children, className }, ref) => {
 	}, [showMenu]);
 
 	const wrapperClass = classNames(
-		"absolute w-max transition-all duration-250",
+		"absolute w-max transition-all duration-250 z-10",
 		className
 	);
 

@@ -8,23 +8,38 @@ body {
 }
 
 h1 {
-    @apply text-4xl
+    @apply text-3xl;
+    @media (min-width: 768px) {
+        @apply text-4xl
+    }
 }
 
 h2 {
-    @apply text-3xl
+    @apply text-2xl;
+    @media (min-width: 768px) {
+        @apply text-3xl
+    }
 }
 
 h3 {
-    @apply text-2xl
+    @apply text-xl;
+    @media (min-width: 768px) {
+        @apply text-2xl
+    }
 }
 
 h4 {
-    @apply text-xl
+    @apply text-lg;
+    @media (min-width: 768px) {
+        @apply text-xl
+    }
 }
 
 h5 {
-    @apply text-lg
+    @apply text-base;
+    @media (min-width: 768px) {
+        @apply text-lg
+    }
 }
 
 h6 {

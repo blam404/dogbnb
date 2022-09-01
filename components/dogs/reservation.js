@@ -3,6 +3,7 @@ import React, { useContext, useEffect, useRef, useState } from "react";
 import Button from "../ui/button";
 import { convertToUTC } from "../../utilityFunctions/dateTime";
 import { Context } from "../store";
+import getBrowserWidth from "../../utilityFunctions/getBrowserWidth";
 import ModalCentered from "../ui/modalCentered";
 
 import { XIcon } from "@heroicons/react/solid";
@@ -21,6 +22,7 @@ const Reservation = ({ dog }) => {
 	const [resConfirmed, setResConfirmed] = useState();
 	const [totalCost, setTotalCost] = useState();
 	const [totalDays, setTotalDays] = useState();
+	const { md } = getBrowserWidth();
 
 	const reservationModalRef = useRef();
 
@@ -97,6 +99,45 @@ const Reservation = ({ dog }) => {
 		);
 	};
 
+	const ReservationConfirm = () => (
+		<ModalCentered ref={reservationModalRef}>
+			<div className="flex items-center justify-between">
+				<h1 className="text-base">
+					<strong>Reservation</strong>
+				</h1>
+				<div
+					className="w-4 h-4 cursor-pointer"
+					onClick={closeReservationModal}
+				>
+					<XIcon />
+				</div>
+			</div>
+			<hr className="my-4" />
+			{!resConfirmed && (
+				<>
+					<div>
+						<p>
+							The scope of this project doesn't require a real
+							functioning payment system. Click the "Reserve"
+							button and a record will be created in the system.
+						</p>
+					</div>
+					<hr className="my-4" />
+					<div className="flex justify-center w-full">
+						<div className="w-full md:w-1/2">
+							<ReservationInfo onClick={handleReservation} />
+						</div>
+					</div>
+				</>
+			)}
+			{resConfirmed && (
+				<div>
+					<p>Reservation confirmed.</p>
+				</div>
+			)}
+		</ModalCentered>
+	);
+
 	const handleReservation = async (e) => {
 		e.preventDefault();
 		const startUTC = convertToUTC(startDate);
@@ -129,50 +170,71 @@ const Reservation = ({ dog }) => {
 		}
 	};
 
-	return (
-		<>
-			<div className="sticky top-8 rounded-lg shadow-lg border border-slate-200 p-6 overflow-hidden">
-				<ReservationInfo onClick={openReservationModal} />
+	const formattedResDate = () => {
+		const months = [
+			"Jan",
+			"Feb",
+			"Mar",
+			"Apr",
+			"May",
+			"Jun",
+			"Jul",
+			"Aug",
+			"Sep",
+			"Oct",
+			"Nov",
+			"Dec",
+		];
+		const startMonth = startDate && startDate.getUTCMonth();
+		const startDay = startDate && startDate.getUTCDate();
+		const endMonth = endDate && endDate.getUTCMonth();
+		const endDay = endDate && endDate.getUTCDate();
+		return (
+			<>
+				<strong>{`${months[startMonth]} ${startDay}`}</strong> &ndash;{" "}
+				<strong>
+					{endMonth === startMonth
+						? endDay
+						: `${months[endMonth]} ${endDay}`}
+				</strong>
+			</>
+		);
+	};
+
+	if (md) {
+		return (
+			<div className="relative w-2/5 pl-12">
+				<div className="sticky top-8 rounded-lg shadow-lg border border-slate-200 p-6 overflow-hidden">
+					<ReservationInfo onClick={openReservationModal} />
+				</div>
+				<ReservationConfirm />
 			</div>
-			<ModalCentered ref={reservationModalRef}>
-				<div className="flex items-center justify-between">
-					<h1 className="text-base">
-						<strong>Reservation</strong>
-					</h1>
-					<div
-						className="w-4 h-4 cursor-pointer"
-						onClick={closeReservationModal}
-					>
-						<XIcon />
+		);
+	} else if (!md) {
+		return (
+			<div className="fixed bottom-0 left-0 right-0 py-4 px-6 z-10 bg-slate-200">
+				<div className="flex justify-between items-center">
+					<div>
+						<p className="mb-0">
+							<span className="text-lg">
+								<strong>${dog.price}</strong>
+							</span>
+							/day
+						</p>
+						<p className="mb-0">{formattedResDate()}</p>
+					</div>
+					<div>
+						<Button solid onClick={openReservationModal}>
+							Reserve
+						</Button>
 					</div>
 				</div>
-				<hr className="my-4" />
-				{!resConfirmed && (
-					<>
-						<div>
-							<p>
-								The scope of this project doesn't require a real
-								functioning payment system. Click the "Reserve"
-								button and a record will be created in the
-								system.
-							</p>
-						</div>
-						<hr className="my-4" />
-						<div className="flex justify-center w-full">
-							<div className="w-1/2">
-								<ReservationInfo onClick={handleReservation} />
-							</div>
-						</div>
-					</>
-				)}
-				{resConfirmed && (
-					<div>
-						<p>Reservation confirmed.</p>
-					</div>
-				)}
-			</ModalCentered>
-		</>
-	);
+				<ReservationConfirm />
+			</div>
+		);
+	} else {
+		return null;
+	}
 };
 
 export default Reservation;

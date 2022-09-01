@@ -85,10 +85,13 @@ export default function Home({ dogCount, reviews }) {
 								.replace(/[.,]00$/, "");
 
 						return (
-							<div className="mx-4 my-6" key={`dogCard-${index}`}>
+							<div
+								className="md:mx-4 my-6"
+								key={`dogCard-${index}`}
+							>
 								<Link href={`/dogs/${dog._id}`}>
-									<div className="cursor-pointer w-64">
-										<div className="w-64 h-64 relative">
+									<div className="cursor-pointer w-80 md:w-64">
+										<div className="w-80 h-80 md:w-64 md:h-64 relative">
 											<Image
 												src={dog.pics[0]}
 												layout="fill"
