@@ -4,8 +4,8 @@ import classNames from "classnames";
 const Button = ({ children, className, onClick, outline, solid, type }) => {
 	const classes = classNames(
 		className,
-		solid && "bg-slate-800 border-slate-800 text-white",
-		outline && "bg-white border-slate-800",
+		solid && "bg-red-400 border-red-400 text-white",
+		outline && "bg-white border-red-400",
 		"border-2 rounded-lg px-4 py-2 "
 	);
 	return (

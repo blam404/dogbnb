@@ -2,13 +2,13 @@ import React, { useCallback, useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 
-import { StarIcon } from "@heroicons/react/solid";
+import { HiStar } from "react-icons/hi";
 
 import clientPromise from "../lib/mongodb";
 import Footer from "../components/footer";
 import Header from "../components/header";
 import Loading from "../components/ui/loading";
-import titleCase from "../utilityFunctions/titleCase";
+import titleCase from "../utils/titleCase";
 
 export default function Home({ dogCount, reviews }) {
 	const [dogList, setDogList] = useState([]);
@@ -106,7 +106,7 @@ export default function Home({ dogCount, reviews }) {
 												</div>
 												{avgRating && (
 													<div className="flex">
-														<StarIcon className="w-6" />
+														<HiStar className="w-6" />
 														{avgRating}
 													</div>
 												)}

@@ -2,17 +2,17 @@ import React from "react";
 import Image from "next/image";
 import { ObjectId } from "mongodb";
 
-import { StarIcon } from "@heroicons/react/solid";
+import { HiStar } from "react-icons/hi";
 
 import CalendarBooking from "../../components/dogs/calendar";
 import clientPromise from "../../lib/mongodb";
 import Gallery from "../../components/dogs/gallery";
-import getBrowserWidth from "../../utilityFunctions/getBrowserWidth";
+import getBrowserWidth from "../../utils/getBrowserWidth";
 import Footer from "../../components/footer";
 import Header from "../../components/header";
 import Reservation from "../../components/dogs/reservation";
 import Reviews from "../../components/dogs/reviews";
-import titleCase from "../../utilityFunctions/titleCase";
+import titleCase from "../../utils/titleCase";
 
 export async function getStaticPaths() {
 	const client = await clientPromise;
@@ -89,7 +89,7 @@ export default function DogPage({ dog, owners, reviews }) {
 									`, ${dog.country}`}
 							</h1>
 							<div className="flex my-2">
-								<StarIcon className="w-6" />{" "}
+								<HiStar className="w-6" />{" "}
 								<strong>{avgRating}</strong> &#x2022;&nbsp;
 								<span>{reviews.length} reviews</span>
 							</div>

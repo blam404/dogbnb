@@ -1,17 +1,17 @@
 import React, { useContext, useEffect, useRef, useState } from "react";
 
 import Button from "../ui/button";
-import { convertToUTC } from "../../utilityFunctions/dateTime";
+import { convertToUTC } from "../../utils/dateTime";
 import { Context } from "../store";
-import getBrowserWidth from "../../utilityFunctions/getBrowserWidth";
+import getBrowserWidth from "../../utils/getBrowserWidth";
 import ModalCentered from "../ui/modalCentered";
 
-import { XIcon } from "@heroicons/react/solid";
+import { HiX } from "react-icons/hi";
 
 const Reservation = ({ dog }) => {
 	const [cost, setCost] = useState();
 	const {
-		login,
+		user,
 		loginModalRef,
 		startDate,
 		endDate,
@@ -44,7 +44,7 @@ const Reservation = ({ dog }) => {
 	};
 
 	const openReservationModal = () => {
-		if (login.loggedIn) {
+		if (user) {
 			reservationModalRef.current.openModal();
 		} else {
 			loginModalRef.current.openModal();
@@ -109,7 +109,7 @@ const Reservation = ({ dog }) => {
 					className="w-4 h-4 cursor-pointer"
 					onClick={closeReservationModal}
 				>
-					<XIcon />
+					<HiX />
 				</div>
 			</div>
 			<hr className="my-4" />
@@ -148,11 +148,11 @@ const Reservation = ({ dog }) => {
 				"Content-Type": "application/json",
 			},
 			body: JSON.stringify({
-				userId: login.userId,
+				email: user.email,
 				startDate: startUTC,
 				endDate: endUTC,
 				dogId: dog._id,
-				ownerId: dog.ownerId,
+				dogOwnerId: dog.ownerId,
 				totalCost: totalCost,
 			}),
 		});

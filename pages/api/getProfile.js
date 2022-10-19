@@ -1,4 +1,3 @@
-import { ObjectId } from "mongodb";
 import clientPromise from "../../lib/mongodb";
 
 export default async function handler(req, res) {
@@ -6,11 +5,11 @@ export default async function handler(req, res) {
 		const client = await clientPromise;
 		const db = await client.db("dogbnb");
 
-		const { login } = req.body;
+		const { userAuth } = req.body;
 
 		const user = await db
 			.collection("owners")
-			.find({ _id: ObjectId(login.userId) })
+			.find({ email: userAuth.email })
 			.toArray();
 
 		res.status(200);

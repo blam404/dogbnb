@@ -1,15 +1,16 @@
 import React, { useContext, useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/router";
 
 import clientPromise from "../lib/mongodb";
 import { Context } from "../components/store";
 import Footer from "../components/footer";
 import Header from "../components/header";
 import Review from "../components/review";
-import titleCase from "../utilityFunctions/titleCase";
+import titleCase from "../utils/titleCase";
 
-import { PencilIcon } from "@heroicons/react/solid";
+import { HiPencil } from "react-icons/hi";
 
 export async function getServerSideProps(context) {
 	try {
@@ -40,13 +41,21 @@ export async function getServerSideProps(context) {
 export default function Reservations({ dogs, reservations }) {
 	const [dogId, setDogId] = useState();
 	const [futureRes, setFutureRes] = useState();
-	const { login } = useContext(Context);
+	const { loading, user } = useContext(Context);
 	const [pastRes, setPastRes] = useState();
 	const [rating, setRating] = useState(0);
 	const [reservationId, setReservationId] = useState();
 	const [review, setReview] = useState("");
 
 	const reviewRef = useRef();
+
+	const route = useRouter();
+
+	useEffect(() => {
+		if (!user && !loading) {
+			route.push("/");
+		}
+	}, [user]);
 
 	const openReviewModal = (resId, doggyId) => {
 		setRating(0);
@@ -56,24 +65,22 @@ export default function Reservations({ dogs, reservations }) {
 		reviewRef.current.openModal();
 	};
 
-	// useEffect(() => {
-	// 	if (!login.loggedIn) {
-	// 		window.location.href = "/";
-	// 	}
-	// }, []);
-
 	useEffect(() => {
-		const today = new Date().getTime();
-		const userReservations = reservations.filter(
-			(res) => res.userId === login.userId
-		);
-		const future = userReservations.filter((res) => res.endDate > today);
-		const past = userReservations.filter((res) => res.endDate < today);
-		future.sort(sortOldest);
-		past.sort(sortNewest);
-		setFutureRes(future);
-		setPastRes(past);
-	}, []);
+		if (user) {
+			const today = new Date().getTime();
+			const userReservations = reservations.filter(
+				(res) => res.email === user.email
+			);
+			const future = userReservations.filter(
+				(res) => res.endDate > today
+			);
+			const past = userReservations.filter((res) => res.endDate < today);
+			future.sort(sortOldest);
+			past.sort(sortNewest);
+			setFutureRes(future);
+			setPastRes(past);
+		}
+	}, [user]);
 
 	const sortNewest = (a, b) => {
 		if (a.startDate < b.startDate) {
@@ -138,7 +145,7 @@ export default function Reservations({ dogs, reservations }) {
 								</div>
 								{past && !res.reviewed && (
 									<div>
-										<PencilIcon
+										<HiPencil
 											className="w-5 h-4 mx-2 cursor-pointer"
 											onClick={() =>
 												openReviewModal(
@@ -156,54 +163,59 @@ export default function Reservations({ dogs, reservations }) {
 			</>
 		);
 	};
-
-	return (
-		<>
-			<Header position="fixed" />
-			{login.loggedIn ? (
-				<>
-					<div className="flex justify-center mt-24">
-						<div className="container px-4">
-							<h1 className="mb-2">Doggy Play Dates</h1>
-							{futureRes && futureRes.length > 0 && (
-								<>
-									<hr className="my-6" />
-									<h2 className="mb-4">Future Play Dates</h2>
-									{mapRes(futureRes)}
-								</>
-							)}
-							{pastRes && pastRes.length > 0 && (
-								<>
-									<hr className="my-6" />
-									<h2 className="mb-4">Past Play Dates</h2>
-									{mapRes(pastRes, true)}
-								</>
-							)}
-							{!futureRes && !pastRes && (
-								<>
-									<hr className="my-6" />
-									<p>
-										You have not scheduled any play dates
-										with the doggos.
-									</p>
-								</>
-							)}
-							<Review
-								ref={reviewRef}
-								rating={rating}
-								setRating={setRating}
-								review={review}
-								setReview={setReview}
-								dogId={dogId}
-								reservationId={reservationId}
-							/>
+	if (user) {
+		return (
+			<>
+				<Header position="fixed" />
+				{user ? (
+					<>
+						<div className="flex justify-center mt-24">
+							<div className="container px-4">
+								<h1 className="mb-2">Doggy Play Dates</h1>
+								{futureRes && futureRes.length > 0 && (
+									<>
+										<hr className="my-6" />
+										<h2 className="mb-4">
+											Future Play Dates
+										</h2>
+										{mapRes(futureRes)}
+									</>
+								)}
+								{pastRes && pastRes.length > 0 && (
+									<>
+										<hr className="my-6" />
+										<h2 className="mb-4">
+											Past Play Dates
+										</h2>
+										{mapRes(pastRes, true)}
+									</>
+								)}
+								{!futureRes && !pastRes && (
+									<>
+										<hr className="my-6" />
+										<p>
+											You have not scheduled any play
+											dates with the doggos.
+										</p>
+									</>
+								)}
+								<Review
+									ref={reviewRef}
+									rating={rating}
+									setRating={setRating}
+									review={review}
+									setReview={setReview}
+									dogId={dogId}
+									reservationId={reservationId}
+								/>
+							</div>
 						</div>
-					</div>
-				</>
-			) : (
-				<></>
-			)}
-			<Footer position="fixed" />
-		</>
-	);
+					</>
+				) : (
+					<></>
+				)}
+				<Footer position="fixed" />
+			</>
+		);
+	}
 }

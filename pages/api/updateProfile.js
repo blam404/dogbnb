@@ -1,4 +1,3 @@
-import { ObjectId } from "mongodb";
 import clientPromise from "../../lib/mongodb";
 
 export default async function handler(req, res) {
@@ -6,16 +5,15 @@ export default async function handler(req, res) {
 		const client = await clientPromise;
 		const db = await client.db("dogbnb");
 
-		const { firstName, lastName, userId, username } = req.body;
+		const { firstName, lastName, email } = req.body;
 
 		const filter = {
-			_id: ObjectId(userId),
+			email,
 		};
 		const updateItem = {
 			$set: {
-				firstName: firstName,
-				lastName: lastName,
-				username: username,
+				firstName,
+				lastName,
 			},
 		};
 

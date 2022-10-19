@@ -6,7 +6,7 @@ import React, {
 } from "react";
 import { createPortal } from "react-dom";
 
-import getBrowserWidth from "../../utilityFunctions/getBrowserWidth";
+import getBrowserWidth from "../../utils/getBrowserWidth";
 
 const ModalCentered = forwardRef(({ children }, ref) => {
 	const [showModal, setShowModal] = useState(false);

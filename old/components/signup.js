@@ -1,9 +1,9 @@
 import React, { forwardRef, useContext, useEffect, useState } from "react";
 
-import { Context } from "../components/store";
-import ModalCentered from "./ui/modalCentered";
+import { Context } from "../../components/store";
+import ModalCentered from "../../components/ui/modalCentered";
 
-import { XIcon } from "@heroicons/react/solid";
+import { HiX } from "react-icons/hi";
 
 const SignUp = forwardRef((props, ref) => {
 	const [accountCreated, setAccountCreated] = useState(false);
@@ -111,7 +111,7 @@ const SignUp = forwardRef((props, ref) => {
 					<strong>Sign Up</strong>
 				</h1>
 				<div className="w-4 h-4 cursor-pointer" onClick={closeModal}>
-					<XIcon />
+					<HiX />
 				</div>
 			</div>
 			<hr className="my-4" />

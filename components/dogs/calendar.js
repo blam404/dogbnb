@@ -2,12 +2,12 @@ import React, { useContext, useEffect, useState } from "react";
 import Calendar from "react-calendar";
 
 import { Context } from "../store";
-import { convertToUTC, xDateFromToday } from "../../utilityFunctions/dateTime";
-import getBrowserWidth from "../../utilityFunctions/getBrowserWidth";
-import titleCase from "../../utilityFunctions/titleCase";
+import { convertToUTC, xDateFromToday } from "../../utils/dateTime";
+import getBrowserWidth from "../../utils/getBrowserWidth";
+import titleCase from "../../utils/titleCase";
 
-import { ChevronLeftIcon } from "@heroicons/react/solid";
-import { ChevronRightIcon } from "@heroicons/react/solid";
+import { HiChevronLeft } from "react-icons/hi";
+import { HiChevronRight } from "react-icons/hi";
 
 const CalendarBooking = ({ dog }) => {
 	const { endDate, setEndDate } = useContext(Context);
@@ -122,9 +122,9 @@ const CalendarBooking = ({ dog }) => {
 				minDate={today}
 				maxDate={nextYear}
 				onChange={handleDateSelect}
-				nextLabel={<ChevronRightIcon className="h-4 w-4" />}
+				nextLabel={<HiChevronRight className="h-4 w-4" />}
 				next2Label={null}
-				prevLabel={<ChevronLeftIcon className="h-4 w-4" />}
+				prevLabel={<HiChevronLeft className="h-4 w-4" />}
 				prev2Label={null}
 				selectRange={true}
 				showDoubleView={md}

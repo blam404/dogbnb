@@ -4,11 +4,11 @@ import { createPortal } from "react-dom";
 import Image from "next/image";
 
 import Button from "../ui/button";
-import getBrowserWidth from "../../utilityFunctions/getBrowserWidth";
+import getBrowserWidth from "../../utils/getBrowserWidth";
 
-import { ChevronLeftIcon } from "@heroicons/react/solid";
-import { ChevronRightIcon } from "@heroicons/react/solid";
-import { XIcon } from "@heroicons/react/solid";
+import { HiChevronLeft } from "react-icons/hi";
+import { HiChevronRight } from "react-icons/hi";
+import { HiX } from "react-icons/hi";
 
 const Gallery = ({ pictures }) => {
 	const [currentImage, setCurrentImage] = useState(0);
@@ -101,10 +101,10 @@ const Gallery = ({ pictures }) => {
 					/>
 				</div>
 				<div className={prevArrowClass} onClick={previousImage}>
-					<ChevronLeftIcon className="w-16 px-2" />
+					<HiChevronLeft className="w-16 px-2" />
 				</div>
 				<div className={nextArrowClass} onClick={nextImage}>
-					<ChevronRightIcon className="w-16 px-2" />
+					<HiChevronRight className="w-16 px-2" />
 				</div>
 				<div
 					className="fixed top-4 right-16 z-10 text-white hover:text-white cursor-pointer"
@@ -113,7 +113,7 @@ const Gallery = ({ pictures }) => {
 						document.body.style.overflow = "auto";
 					}}
 				>
-					<XIcon className="w-8" />
+					<HiX className="w-8" />
 				</div>
 			</>,
 			document.getElementById("modal-root")

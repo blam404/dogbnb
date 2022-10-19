@@ -5,11 +5,11 @@ export default async function handler(req, res) {
 		const client = await clientPromise;
 		const db = await client.db("dogbnb");
 
-		const { userId, startDate, endDate, dogId, ownerId, totalCost } =
+		const { email, startDate, endDate, dogId, ownerId, totalCost } =
 			req.body;
 
 		const result = await db.collection("reservations").insertOne({
-			userId,
+			email,
 			startDate: startDate,
 			endDate: endDate,
 			dogId,

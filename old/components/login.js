@@ -3,7 +3,7 @@ import React, { forwardRef, useContext, useState } from "react";
 import { Context } from "../components/store";
 import ModalCentered from "./ui/modalCentered";
 
-import { XIcon } from "@heroicons/react/solid";
+import { HiX } from "react-icons/hi";
 
 const LogIn = forwardRef(({ signUpModalRef }, ref) => {
 	const { login, setLogin } = useContext(Context);
@@ -81,7 +81,7 @@ const LogIn = forwardRef(({ signUpModalRef }, ref) => {
 					className="w-4 h-4 cursor-pointer"
 					onClick={closeLoginModal}
 				>
-					<XIcon />
+					<HiX />
 				</div>
 			</div>
 			<hr className="my-4" />

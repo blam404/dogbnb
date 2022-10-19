@@ -1,8 +1,8 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useRef } from "react";
 import Image from "next/image";
 
-import { StarIcon } from "@heroicons/react/solid";
-import { XIcon } from "@heroicons/react/solid";
+import { HiStar } from "react-icons/hi";
+import { HiX } from "react-icons/hi";
 
 import Button from "../ui/button";
 import ModalCentered from "../ui/modalCentered";
@@ -38,14 +38,19 @@ const Reviews = ({ reviews, owners, avgRating }) => {
 	return (
 		<div className="mb-4">
 			<h2 className="flex my-8">
-				<StarIcon className="w-6" /> {avgRating} &#x2022;{" "}
-				{reviews.length} reviews
+				<HiStar className="w-6" /> {avgRating} &#x2022; {reviews.length}{" "}
+				reviews
 			</h2>
 			<div className="md:flex md:flex-wrap overflow-x-scroll md:overflow-x-auto whitespace-nowrap md:whitespace-normal">
 				{limitedReviews.map((review, index) => {
-					const reviewer = owners.find(
-						(owner) => owner._id === review.reviewerId
-					);
+					const reviewer = owners.find((owner) => {
+						// original scope of site didn't have a real authentication
+						// reviewerEmail had to be added since model changed when I added real authentication
+						return (
+							owner._id === review.reviewerId ||
+							owner.email === review.reviewerEmail
+						);
+					});
 
 					const reviewDate = new Date(review.reviewDate);
 					const reviewMonth = monthArray[reviewDate.getMonth()];
@@ -73,8 +78,8 @@ const Reviews = ({ reviews, owners, avgRating }) => {
 										/>
 									</div>
 								) : (
-									<div className="h-16 w-16 mr-4 text-3xl text-white bg-slate-600 rounded-full flex justify-center items-center">
-										{reviewer.username
+									<div className="h-16 w-16 mr-4 text-3xl text-white bg-red-800 rounded-full flex justify-center items-center">
+										{reviewer.firstName
 											.charAt(0)
 											.toUpperCase()}
 									</div>
@@ -108,22 +113,27 @@ const Reviews = ({ reviews, owners, avgRating }) => {
 			<ModalCentered ref={allReviewsRef}>
 				<div className="flex items-center justify-between">
 					<h2 className="flex">
-						<StarIcon className="w-6" /> {avgRating} &#x2022;{" "}
+						<HiStar className="w-6" /> {avgRating} &#x2022;{" "}
 						{reviews.length} reviews
 					</h2>
 					<div
 						className="w-4 h-4 cursor-pointer"
 						onClick={closeAllReviewModal}
 					>
-						<XIcon />
+						<HiX />
 					</div>
 				</div>
 				<hr className="my-4" />
 				<div className="flex flex-wrap">
 					{reviews.map((review) => {
-						const reviewer = owners.find(
-							(owner) => owner._id === review.reviewerId
-						);
+						const reviewer = owners.find((owner) => {
+							// original scope of site didn't have a real authentication
+							// reviewerEmail had to be added since model changed when I added real authentication
+							return (
+								owner._id === review.reviewerId ||
+								owner.email === review.reviewerEmail
+							);
+						});
 
 						const reviewDate = new Date(review.reviewDate);
 						const reviewMonth = monthArray[reviewDate.getMonth()];
@@ -142,8 +152,8 @@ const Reviews = ({ reviews, owners, avgRating }) => {
 											/>
 										</div>
 									) : (
-										<div className="h-16 w-16 mr-4 text-white bg-slate-600 rounded-full flex justify-center items-center">
-											{reviewer.username
+										<div className="h-16 w-16 mr-4 text-white bg-red-800 rounded-full flex justify-center items-center">
+											{reviewer.firstName
 												.charAt(0)
 												.toUpperCase()}
 										</div>

@@ -1,14 +1,15 @@
 import clientPromise from "../../lib/mongodb";
 import { ObjectId } from "mongodb";
 
-import { convertToUTC } from "../../utilityFunctions/dateTime";
+import { convertToUTC } from "../../utils/dateTime";
 
 export default async function handler(req, res) {
 	try {
 		const client = await clientPromise;
 		const db = await client.db("dogbnb");
 
-		const { dogId, reviewerId, rating, reservationId, review } = req.body;
+		const { dogId, reviewerEmail, rating, reservationId, review } =
+			req.body;
 
 		const reviewDate = convertToUTC(new Date());
 
@@ -16,7 +17,7 @@ export default async function handler(req, res) {
 			dogId: ObjectId(dogId),
 			rating,
 			review,
-			reviewerId: ObjectId(reviewerId),
+			reviewerEmail,
 			reviewDate,
 		});
 

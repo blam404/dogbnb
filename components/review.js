@@ -1,19 +1,13 @@
-import React, {
-	forwardRef,
-	useContext,
-	useEffect,
-	useRef,
-	useState,
-} from "react";
+import React, { forwardRef, useContext, useEffect, useState } from "react";
 
 import { Context } from "./store";
 import ModalCentered from "./ui/modalCentered";
-import { XIcon } from "@heroicons/react/solid";
+import { HiX } from "react-icons/hi";
 
 const Review = forwardRef(
 	({ dogId, reservationId, rating, setRating, review, setReview }, ref) => {
 		const [hover, setHover] = useState(0);
-		const { login } = useContext(Context);
+		const { user } = useContext(Context);
 		const [reviewConfirmed, setReviewConfirmed] = useState();
 
 		useEffect(() => {
@@ -40,7 +34,7 @@ const Review = forwardRef(
 					},
 					body: JSON.stringify({
 						dogId,
-						reviewerId: login.userId,
+						reviewerEmail: user.email,
 						rating,
 						reservationId,
 						review,
@@ -70,7 +64,7 @@ const Review = forwardRef(
 						className="w-4 h-4 cursor-pointer"
 						onClick={closeModal}
 					>
-						<XIcon />
+						<HiX />
 					</div>
 				</div>
 				<hr className="my-4" />
